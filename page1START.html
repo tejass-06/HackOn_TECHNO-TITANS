@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BUDGETBUDDY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(-45deg, #4CAF50, #2E7D32, #2196F3, #1565C0);
+            background-size: 400% 400%;
+            animation: gradient 5s ease infinite;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .listening {
+            background-color: red;
+            color: white;
+        }
+
+        .animated-logo {
+            position: relative;
+            width: 250px;
+            height: auto;
+            animation: enter-logo 2s ease-out forwards, logoBounce 2s infinite ease-in-out;
+        }
+
+        .animated-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        @keyframes enter-logo {
+            from { opacity: 0; transform: translateY(100%); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes logoBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-text, .tagline {
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid white;
+        }
+
+        .welcome-text {
+            font-size: 42px;
+            width: 0;
+            animation: typing 2s steps(30, end) forwards, blinkCursor 0.8s infinite;
+        }
+
+        .tagline {
+            font-size: 20px;
+            margin-top: 10px;
+            width: 0;
+            animation: typing 3s steps(50, end) 2s forwards, blinkCursor 0.8s infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blinkCursor {
+            50% { border-color: transparent; }
+        }
+
+        .explore-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .explore-button:hover {
+            background-color: #e68900;
+        }
+    </style>
+</head>
+<body>
+    <div id="statusIndicator" class="status-indicator">🟡 Click to Start Listening</div>
+
+    <div class="animated-logo">
+        <img src="BBlogo.png" alt="BudgetBuddy Logo">
+    </div>
+    <div class="welcome-text">Welcome to BUDGETBUDDY</div>
+    <div class="tagline">"Let AI Handle the Numbers, You Live the Life."</div>
+
+    <a href="page2LOGIN.html" class="explore-button">Explore</a>
+
+    <script>
+        let recognition;
+        let statusIndicator = document.getElementById("statusIndicator");
+
+        function startVoiceRecognition() {
+            if (!("webkitSpeechRecognition" in window)) {
+                alert("Your browser does not support speech recognition. Please use Google Chrome.");
+                return;
+            }
+
+            document.removeEventListener("click", startVoiceRecognition);
+            document.removeEventListener("keydown", startVoiceRecognition);
+
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = "en-US";
+
+            recognition.onstart = function () {
+                statusIndicator.textContent = "🔴 Listening...";
+                statusIndicator.classList.add("listening");
+            };
+
+            recognition.onresult = function (event) {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        let speechResult = event.results[i][0].transcript.trim().toLowerCase();
+
+                        if (speechResult.includes("hello")) {
+                            window.location.href = "page2LOGIN.html";
+                        }
+                    }
+                }
+            };
+
+            recognition.onerror = function () {
+                stopListening();
+                restartRecognition();
+            };
+
+            recognition.onend = function () {
+                stopListening();
+                restartRecognition();
+            };
+
+            recognition.start();
+        }
+
+        function stopListening() {
+            statusIndicator.textContent = "⚪ Not Listening (Click to Restart)";
+            statusIndicator.classList.remove("listening");
+        }
+
+        function restartRecognition() {
+            setTimeout(() => {
+                if (recognition) recognition.start();
+            }, 1000);
+        }
+
+        window.onload = function () {
+            window.speechSynthesis.onvoiceschanged = speakText;
+        };
+
+        function speakText() {
+            let speech = new SpeechSynthesisUtterance("Welcome to BudgetBuddy. Let AI Handle the Numbers, You Live the Life.");
+            speech.rate = 1;
+            speech.pitch = 0.8;
+            speech.volume = 1;
+            speech.lang = "en-US";
+            
+            let voices = window.speechSynthesis.getVoices();
+            let roboticVoice = voices.find(voice => voice.name.toLowerCase().includes("google us english") || voice.name.toLowerCase().includes("robot"));
+            
+            if (roboticVoice) {
+                speech.voice = roboticVoice;
+            }
+            
+            window.speechSynthesis.speak(speech);
+        }
+
+        document.addEventListener("click", startVoiceRecognition);
+        document.addEventListener("keydown", startVoiceRecognition);
+    </script>
+</body>
+</html>
