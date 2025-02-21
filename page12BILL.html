@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domestic Expenses</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, hsl(292, 85%, 57%), #fda085);
+            animation: gradientAnimation 5s infinite alternate;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background: linear-gradient(120deg, #f6d365, #fda085); }
+            100% { background: linear-gradient(120deg, #84fab0, #8fd3f4); }
+        }
+
+        .taskbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .taskbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .taskbar a:hover {
+            text-decoration: underline;
+        }
+
+        .taskbar img.logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .expenses {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .expense-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .expense-item h3 {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .payment-options {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            color: white;
+        }
+
+        .payment-options button {
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .payment-options button:hover {
+            background-color: #0056b3;
+        }
+
+        .payment-options img {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background-color: #ff4757;
+        }
+
+        .close-btn:hover {
+            background-color: #e84118;
+        }
+    </style>
+</head>
+<body>
+    <div class="taskbar">
+        <div class="left">
+            <img src="BBlogo.png" alt="Logo" class="logo">
+            <a href="page3MAIN.html">Home</a>
+        </div>
+        <div class="right">
+            <div class="profile">
+                <img src="UDP.jpg" alt="Profile">
+                <span>MR. PRAJWAL</span>
+            </div>
+    
+
+         
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Manage Your Domestic Expenses</h1>
+        <div class="expenses">
+            <div class="expense-item">
+                <h3>Groceries</h3>
+                <p>Date: 16 Feb 2025</p>
+                <p>Last Date: 20 Feb 2025</p>
+                <p>₹ 2,500</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Electricity</h3>
+                <p>Date: 10 Feb 2025</p>
+                <p>Last Date: 25 Feb 2025</p>
+                <p>₹ 1,200</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Water</h3>
+                <p>Date: 05 Feb 2025</p>
+                <p>Last Date: 22 Feb 2025</p>
+                <p>₹ 600</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Internet</h3>
+                <p>Date: 12 Feb 2025</p>
+                <p>Last Date: 28 Feb 2025</p>
+                <p>₹ 999</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Gas</h3>
+                <p>Date: 15 Feb 2025</p>
+                <p>Last Date: 23 Feb 2025</p>
+                <p>₹ 800</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Rent</h3>
+                <p>Date: 01 Feb 2025</p>
+                <p>Last Date: 10 Feb 2025</p>
+                <p>₹ 15,000</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>Transportation</h3>
+                <p>Date: 18 Feb 2025</p>
+                <p>Last Date: 25 Feb 2025</p>
+                <p>₹ 1,500</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+            <div class="expense-item">
+                <h3>School Fees</h3>
+                <p>Date: 08 Feb 2025</p>
+                <p>Last Date: 20 Feb 2025</p>
+                <p>₹ 10,000</p>
+                <button onclick="showPaymentOptions()">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-options" id="paymentOptions">
+        <h2>Select Payment Method</h2>
+        <button onclick="alert('Redirecting to QR Payment...')">Pay with QR Code</button>
+        <button onclick="alert('Redirecting to Credit/Debit Card Payment...')">Pay with Card</button>
+        <button onclick="alert('Redirecting to Net Banking...')">Net Banking</button>
+        <button onclick="alert('Redirecting to Wallet Payment...')">Pay with Wallet</button>
+        <button class="close-btn" onclick="closePaymentOptions()">Close</button>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025  BUDGETBUDDY</p>
+    </div>
+
+    <script>
+        function showPaymentOptions() {
+            document.getElementById('paymentOptions').style.display = 'flex';
+        }
+
+        function closePaymentOptions() {
+            document.getElementById('paymentOptions').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
