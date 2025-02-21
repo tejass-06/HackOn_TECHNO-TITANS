@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Details - BudgetBuddy</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #d7ffd9, #1b5e20);
+            overflow-y: auto;
+            color: white;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 800px;
+            animation: fadeInUp 1.5s ease-in-out;
+            overflow: hidden;
+            max-height: none;
+            position: relative;
+        }
+
+        .search-container {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .search-bar {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .income-list {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .income-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            border-bottom: 2px solid white;
+            padding-bottom: 5px;
+        }
+
+        .income-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 5px;
+        }
+
+        .delete-button, .edit-button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-button {
+            background: orange;
+        }
+
+        .no-results {
+            display: none;
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search income...">
+        </div>
+        <h1>Income Details</h1>
+        <p class="tagline">"Add Your Earnings Manually!"</p>
+
+        <div class="income-list" id="incomeList">
+            <h2>Your Income Entries</h2>
+            <div class="income-header">
+                <span>Income Source</span>
+                <span>Amount (₹)</span>
+                <span>Date</span>
+                <span>Actions</span>
+            </div>
+            <div id="noResults" class="no-results">No results found</div>
+        </div>
+        
+
+        <div class="income-input">
+            <h2>Add Income</h2>
+            <form class="income-form" id="incomeForm">
+                <input type="text" id="incomeSource" placeholder="Income Source" required>
+                <input type="number" id="incomeAmount" placeholder="Amount (₹)" required>
+                <input type="date" id="incomeDate" required>
+                <button type="submit">Add Income</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('incomeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let source = document.getElementById('incomeSource').value;
+            let amount = document.getElementById('incomeAmount').value;
+            let date = document.getElementById('incomeDate').value;
+
+            if (source && amount && date) {
+                addIncomeEntry(source, amount, date);
+                document.getElementById('incomeForm').reset();
+            }
+        });
+
+        function addIncomeEntry(source, amount, date) {
+            let incomeList = document.getElementById('incomeList');
+            let incomeItem = document.createElement('div');
+            incomeItem.classList.add('income-item');
+            incomeItem.innerHTML = `
+                <span class="income-source">${source}</span>
+                ₹<span class="income-amount">${amount}</span>
+                <span class="income-date">${date}</span>
+                <div class='button-container'>
+                    <button class='edit-button'>Edit</button>
+                    <button class='delete-button'>Delete</button>
+                </div>
+            `;
+            incomeList.appendChild(incomeItem);
+            attachEventListeners(incomeItem);
+        }
+
+        function attachEventListeners(item) {
+            let editButton = item.querySelector('.edit-button');
+            let deleteButton = item.querySelector('.delete-button');
+            editButton.addEventListener('click', function() {
+                let source = item.querySelector('.income-source');
+                let amount = item.querySelector('.income-amount');
+                let date = item.querySelector('.income-date');
+                
+                if (editButton.textContent === "Edit") {
+                    source.contentEditable = true;
+                    amount.contentEditable = true;
+                    date.contentEditable = true;
+                    editButton.textContent = "Save";
+                } else {
+                    source.contentEditable = false;
+                    amount.contentEditable = false;
+                    date.contentEditable = false;
+                    editButton.textContent = "Edit";
+                }
+            });
+            deleteButton.addEventListener('click', function() {
+                item.remove();
+            });
+        }
+
+        document.getElementById('searchBar').addEventListener('input', function() {
+            let searchValue = this.value.toLowerCase();
+            let items = document.querySelectorAll('.income-item');
+            let found = false;
+            
+            items.forEach(item => {
+                let text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchValue) ? "flex" : "none";
+                if (text.includes(searchValue)) found = true;
+            });
+
+            document.getElementById('noResults').style.display = found ? "none" : "block";
+        });
+    </script>
+</body>
+</html>
