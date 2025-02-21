@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses Tracker - Budget Buddy</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(-45deg, #20bf55, #01baef, #ff4e50, #fc913a);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+        }
+        
+        .navbar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 30px;
+        }
+
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-left: 10px;
+            color: #333;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-content {
+            max-width: 800px;
+            margin: 120px auto 50px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+        }
+        
+        .expense-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input, button {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: #20bf55;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            background-color: #01baef;
+            transform: scale(1.05);
+        }
+        
+        .expense-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        .delete-btn, .edit-btn {
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+            color: white;
+        }
+
+        .delete-btn {
+            background: red;
+        }
+
+        .edit-btn {
+            background: orange;
+        }
+
+        /* Total amount section */
+        .total-amount {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="BBlogo.png" alt="BUDGETBUDDY">
+                <span>Budget Buddy</span>
+            </div>
+            <div class="nav-links">
+                <a href="page3MAIN.html">Home</a>
+                <a href="EXGAME.html">Challenge</a>
+                <a href="page12BILL.html">Bills</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="main-content">
+        <h1>Expense Tracker</h1>
+        <div class="expense-form">
+            <label for="expenseName">Expense Name:</label>
+            <input type="text" id="expenseName" placeholder="Enter expense name">
+            <label for="expenseAmount">Amount:</label>
+            <input type="number" id="expenseAmount" placeholder="Enter amount">
+            <label for="expenseDate">Date:</label>
+            <input type="date" id="expenseDate">
+            <button onclick="addExpense()">Add Expense</button>
+            <input type="text" id="searchBar" placeholder="Search Expenses" onkeyup="searchExpense()">
+        </div>
+        <ul class="expense-list" id="expenseList"></ul>
+        <div class="total-amount" id="totalAmount">Total Amount: Rs. 0</div>
+    </div>
+    
+    <script>
+        let totalAmount = 0;
+
+        function updateTotal() {
+            document.getElementById('totalAmount').textContent = `Total Amount: Rs. ${totalAmount}`;
+        }
+
+        function addExpense() {
+            let name = document.getElementById('expenseName').value;
+            let amount = parseFloat(document.getElementById('expenseAmount').value);
+            let date = document.getElementById('expenseDate').value;
+            
+            if (name === "" || isNaN(amount) || amount <= 0 || date === "") {
+                alert("Please enter valid expense name, amount, and date");
+                return;
+            }
+            
+            let expenseList = document.getElementById('expenseList');
+            let li = document.createElement('li');
+            li.classList.add('expense-item');
+            li.innerHTML = `
+                <span><strong>Expense:</strong> ${name} - <strong>Amount:</strong> Rs.${amount} - <strong>Date:</strong> ${date}</span>
+                <div>
+                    <button class="edit-btn" onclick="editExpense(this, ${amount})">Edit</button>
+                    <button class="delete-btn" onclick="deleteExpense(this, ${amount})">Delete</button>
+                </div>
+            `;
+            expenseList.appendChild(li);
+
+            totalAmount += amount;
+            updateTotal();
+        }
+
+        function editExpense(button, oldAmount) {
+            let li = button.parentElement.parentElement;
+            let span = li.querySelector("span").textContent;
+            let parts = span.split(" - ");
+            
+            document.getElementById('expenseName').value = parts[0].replace("Expense: ", "");
+            document.getElementById('expenseAmount').value = parts[1].replace("Amount: Rs.", "");
+            document.getElementById('expenseDate').value = parts[2].replace("Date: ", "");
+            
+            li.remove();
+            totalAmount -= oldAmount; // Subtract old amount before adding new
+            updateTotal();
+        }
+
+        function deleteExpense(button, amount) {
+            button.parentElement.parentElement.remove();
+            totalAmount -= amount;
+            updateTotal();
+        }
+
+        function searchExpense() {
+            let filter = document.getElementById('searchBar').value.toLowerCase();
+            let items = document.querySelectorAll('.expense-item');
+            items.forEach(item => {
+                let text = item.textContent.toLowerCase();
+                item.style.display = text.includes(filter) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
